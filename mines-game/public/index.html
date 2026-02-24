@@ -4,286 +4,433 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mines - Game Hub</title>
+    <title>haxxBuzz</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             align-items: flex-start;
+            background-color: #f5f6fa;
+            color: #333;
         }
 
         .hub-container {
             width: 100%;
-            max-width: 900px;
+            max-width: 480px;
             margin: 0 auto;
             min-height: 100vh;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
         }
 
-        /* Top Navbar */
-        .navbar {
+        /* Top Header */
+        .top-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 25px;
-            background-color: var(--bg-sidebar);
-            border-bottom: 1px solid var(--border-color);
+            padding: 18px 20px 10px;
         }
 
-        .navbar .brand {
+        .top-header .brand {
             font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--accent-green);
+            font-weight: 800;
+            color: #1a1a2e;
         }
 
-        .navbar .user-info {
+        .top-header .brand span {
+            color: #f5a623;
+        }
+
+        .top-header .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .top-header .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid #e0e0e0;
+            background: #fff;
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .navbar .balance-badge {
-            background-color: var(--bg-card);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: var(--accent-green);
-            font-size: 0.9rem;
-        }
-
-        .navbar .logout-btn {
-            background: none;
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 6px 12px;
-            border-radius: 4px;
+            justify-content: center;
             cursor: pointer;
-            font-size: 0.8rem;
-            font-family: inherit;
-            transition: background-color 0.2s;
-        }
-
-        .navbar .logout-btn:hover {
-            background-color: var(--bg-card);
-        }
-
-        /* Bottom Tabs */
-        .tabs {
-            display: flex;
-            background-color: var(--bg-sidebar);
-            border-top: 1px solid var(--border-color);
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px 14px 14px;
-            text-align: center;
-            background: none;
-            border: none;
-            color: var(--text-main);
             font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
+            color: #666;
+        }
+
+        /* Balance Section */
+        .balance-section {
+            padding: 5px 20px 20px;
+        }
+
+        .balance-label {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .balance-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1a1a2e;
+        }
+
+        .balance-value .currency {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #999;
+            margin-left: 4px;
+        }
+
+        /* Promo Banner */
+        .promo-banner {
+            margin: 0 20px 20px;
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 50%, #55efc4 100%);
+            border-radius: 14px;
+            padding: 20px;
+            color: #fff;
             position: relative;
-            transition: color 0.2s;
-        }
-
-        .tab-btn .tab-icon {
-            display: block;
-            font-size: 1.3rem;
-            margin-bottom: 2px;
-        }
-
-        .tab-btn.active {
-            color: var(--accent-green);
-        }
-
-        .tab-btn.active::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 20%;
-            width: 60%;
-            height: 3px;
-            background-color: var(--accent-green);
-            border-radius: 0 0 3px 3px;
-        }
-
-        .tab-btn:hover {
-            color: var(--text-light);
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-            padding: 25px;
-            padding-bottom: 80px;
-            /* space for fixed bottom tabs */
-            flex: 1;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Game Cards Grid */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 18px;
-        }
-
-        .game-card {
-            background-color: var(--bg-sidebar);
-            border-radius: 12px;
             overflow: hidden;
+        }
+
+        .promo-banner h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .promo-banner p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .promo-banner .promo-badge {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 1.8rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px 20px;
+        }
+
+        .quick-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .quick-action .qa-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: transform 0.2s;
+        }
+
+        .quick-action:hover .qa-icon {
+            transform: scale(1.08);
+        }
+
+        .quick-action .qa-label {
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Game Cards Section */
+        .section-title {
+            padding: 5px 20px 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .game-cards-row {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px 20px;
+        }
+
+        .game-card-mini {
+            flex: 1;
+            border-radius: 14px;
+            padding: 16px;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid var(--border-color);
-        }
-
-        .game-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            border-color: var(--accent-green);
-        }
-
-        .game-card .card-image {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            background-color: var(--bg-card);
+            text-decoration: none;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            font-size: 3.5rem;
-            position: relative;
-            overflow: hidden;
+            min-height: 80px;
         }
 
-        .game-card .card-image::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+        .game-card-mini:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .game-card .card-info {
-            padding: 12px;
+        .game-card-mini .card-text h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 3px;
         }
 
-        .game-card .card-info h3 {
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-bottom: 4px;
+        .game-card-mini .card-text p {
+            font-size: 0.72rem;
+            opacity: 0.8;
         }
 
-        .game-card .card-info p {
-            color: var(--text-main);
-            font-size: 0.75rem;
+        .game-card-mini .card-emoji {
+            font-size: 2.2rem;
+            opacity: 0.9;
         }
 
-        .game-card.coming-soon {
+        .game-card-mini.mines-card {
+            background: #fffbe6;
+            color: #b8860b;
+            border: 1.5px solid #f5e6a3;
+        }
+
+        .game-card-mini.plinko-card {
+            background: #e6fff0;
+            color: #00a854;
+            border: 1.5px solid #b5f5cc;
+        }
+
+        .game-card-mini.dice-card {
+            background: #e6f4ff;
+            color: #1890ff;
+            border: 1.5px solid #b5dcff;
+        }
+
+        .game-card-mini.coming-soon {
             opacity: 0.5;
             pointer-events: none;
         }
 
-        .game-card.coming-soon .card-info p {
-            color: var(--accent-green);
+        /* Status Bar */
+        .status-bar {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #999;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-bar .status-icon {
+            font-size: 1.2rem;
         }
 
         /* Account Section */
-        .account-section {
-            max-width: 500px;
+        .account-panel {
+            padding: 20px;
+            display: none;
+            flex: 1;
         }
 
-        .account-card {
-            background-color: var(--bg-sidebar);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
+        .account-panel.active {
+            display: block;
         }
 
-        .account-card h3 {
-            color: var(--text-light);
+        .play-panel {
+            flex: 1;
+        }
+
+        .play-panel.active {
+            display: block;
+        }
+
+        .acc-card {
+            background: #f8f9fc;
+            border-radius: 14px;
+            padding: 20px;
             margin-bottom: 15px;
-            font-size: 1rem;
+            border: 1px solid #eee;
         }
 
-        .account-row {
+        .acc-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+
+        .acc-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #eee;
         }
 
-        .account-row:last-child {
+        .acc-row:last-child {
             border-bottom: none;
         }
 
-        .account-row .label {
-            color: var(--text-main);
-            font-size: 0.9rem;
+        .acc-row .label {
+            color: #999;
+            font-size: 0.85rem;
         }
 
-        .account-row .value {
-            color: var(--text-light);
+        .acc-row .value {
+            color: #1a1a2e;
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
-        .balance-big {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent-green);
+        .acc-balance {
             text-align: center;
-            padding: 15px 0;
+            padding: 20px 0;
+        }
+
+        .acc-balance .big-bal {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #00b894;
+        }
+
+        .acc-balance .bal-label {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 4px;
         }
 
         .fund-note {
             text-align: center;
-            color: var(--text-main);
-            font-size: 0.85rem;
-            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #999;
+            background: #f0f0f5;
             padding: 12px;
-            background-color: var(--bg-card);
-            border-radius: 8px;
+            border-radius: 10px;
+            margin-top: 10px;
         }
 
-        /* Mobile adjustments */
+        .logout-full-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            background: #fff;
+            color: #ff4757;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .logout-full-btn:hover {
+            background: #fff5f5;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 6px 0 10px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            cursor: pointer;
+            padding: 4px 12px;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        .nav-item .nav-icon {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+
+        .nav-item .nav-label {
+            font-size: 0.7rem;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #f5a623;
+            font-weight: 600;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #f5a623;
+        }
+
+        .nav-item.center-nav {
+            position: relative;
+            top: -18px;
+        }
+
+        .nav-item.center-nav .nav-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #f5a623, #f7c948);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 15px rgba(245, 166, 35, 0.4);
+            color: #fff;
+        }
+
+        /* Content spacer for bottom nav */
+        .nav-spacer {
+            height: 80px;
+        }
+
+        /* Hide/show panels */
+        .panel-hidden {
+            display: none !important;
+        }
+
         @media (max-width: 480px) {
-            .navbar {
-                padding: 12px 15px;
+            .hub-container {
+                max-width: 100%;
             }
 
-            .navbar .brand {
-                font-size: 1.1rem;
-            }
-
-            .tab-content {
-                padding: 15px;
-            }
-
-            .games-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .game-card .card-image {
-                font-size: 2.5rem;
-            }
-
-            .account-section {
+            .bottom-nav {
                 max-width: 100%;
             }
         }
@@ -293,78 +440,132 @@
 <body>
 
     <div class="hub-container">
-        <!-- Navbar -->
-        <nav class="navbar">
-            <div class="brand">💎 Mines Hub</div>
-            <div class="user-info">
-                <span class="balance-badge" id="nav-balance">$0.00</span>
-                <span style="color:var(--text-light); font-weight:500;" id="nav-username"></span>
-                <button class="logout-btn" id="btn-logout">Logout</button>
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="brand"><span>haxx</span>Buzz</div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="location.reload()">🔄</button>
             </div>
-        </nav>
-
-        <!-- Bottom Tabs -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="play"><span class="tab-icon">🎮</span>Play</button>
-            <button class="tab-btn" data-tab="account"><span class="tab-icon">👤</span>Account</button>
         </div>
 
-        <!-- Play Tab -->
-        <div class="tab-content active" id="tab-play">
-            <div class="games-grid">
-                <a href="mines.html" class="game-card" style="text-decoration:none;">
-                    <div class="card-image">💎</div>
-                    <div class="card-info">
-                        <h3>Mines</h3>
-                        <p>Find gems, avoid mines!</p>
-                    </div>
+        <!-- ===== PLAY PANEL ===== -->
+        <div class="play-panel active" id="play-panel">
+            <!-- Balance -->
+            <div class="balance-section">
+                <div class="balance-label">My total assets</div>
+                <div class="balance-value" id="nav-balance-play">0.00 <span class="currency">USD</span></div>
+            </div>
+
+            <!-- Promo Banner -->
+            <div class="promo-banner">
+                <h3>🎁 Welcome Bonus!</h3>
+                <p>Play Mines & earn big rewards.<br>More games coming soon!</p>
+                <div class="promo-badge">💎</div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="mines.html" class="quick-action">
+                    <div class="qa-icon" style="background:#fff3e0;">💎</div>
+                    <span class="qa-label">Mines</span>
                 </a>
-
-                <div class="game-card coming-soon">
-                    <div class="card-image">📌</div>
-                    <div class="card-info">
-                        <h3>Plinko</h3>
-                        <p>Coming Soon</p>
-                    </div>
+                <div class="quick-action" style="opacity:0.4;pointer-events:none;">
+                    <div class="qa-icon" style="background:#ede7f6;">📌</div>
+                    <span class="qa-label">Plinko</span>
                 </div>
-
-                <div class="game-card coming-soon">
-                    <div class="card-image">🎲</div>
-                    <div class="card-info">
-                        <h3>Dice</h3>
-                        <p>Coming Soon</p>
-                    </div>
+                <div class="quick-action" style="opacity:0.4;pointer-events:none;">
+                    <div class="qa-icon" style="background:#e0f2f1;">🎲</div>
+                    <span class="qa-label">Dice</span>
+                </div>
+                <div class="quick-action" style="cursor:default;">
+                    <div class="qa-icon" style="background:#fce4ec;">❓</div>
+                    <span class="qa-label">Help</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Account Tab -->
-        <div class="tab-content" id="tab-account">
-            <div class="account-section">
-                <div class="account-card">
-                    <h3>💰 Your Balance</h3>
-                    <div class="balance-big" id="account-balance">$0.00</div>
-                    <div class="fund-note">
-                        To add funds, please contact the admin.<br>
-                        Funds can only be added by the platform administrator for security.
+            <!-- Game Cards -->
+            <div class="section-title">🎮 Games</div>
+
+            <div class="game-cards-row">
+                <a href="mines.html" class="game-card-mini mines-card">
+                    <div class="card-text">
+                        <h4>Mines</h4>
+                        <p>Find gems & win!</p>
                     </div>
+                    <div class="card-emoji">💎</div>
+                </a>
+                <div class="game-card-mini plinko-card coming-soon">
+                    <div class="card-text">
+                        <h4>Plinko</h4>
+                        <p>Coming Soon</p>
+                    </div>
+                    <div class="card-emoji">📌</div>
                 </div>
-
-                <div class="account-card">
-                    <h3>👤 Profile</h3>
-                    <div class="account-row">
-                        <span class="label">Username</span>
-                        <span class="value" id="account-username"></span>
-                    </div>
-                    <div class="account-row">
-                        <span class="label">Status</span>
-                        <span class="value" style="color:var(--accent-green);">Active</span>
-                    </div>
-                </div>
-
-                <button class="action-btn secondary" id="btn-logout-2" style="width:100%;">Logout</button>
             </div>
+
+            <div class="game-cards-row">
+                <div class="game-card-mini dice-card coming-soon">
+                    <div class="card-text">
+                        <h4>Dice</h4>
+                        <p>Coming Soon</p>
+                    </div>
+                    <div class="card-emoji">🎲</div>
+                </div>
+                <div style="flex:1;"></div>
+            </div>
+
+            <div class="status-bar">
+                <span class="status-icon">🕹️</span>
+                Play games, earn rewards!
+            </div>
+
+            <div class="nav-spacer"></div>
         </div>
+
+        <!-- ===== ACCOUNT PANEL ===== -->
+        <div class="account-panel" id="account-panel">
+            <div class="acc-card">
+                <h3>💰 Your Balance</h3>
+                <div class="acc-balance">
+                    <div class="big-bal" id="account-balance">$0.00</div>
+                    <div class="bal-label">Available Balance</div>
+                </div>
+                <div class="fund-note">
+                    To add funds, contact the admin.
+                </div>
+            </div>
+
+            <div class="acc-card">
+                <h3>👤 Profile</h3>
+                <div class="acc-row">
+                    <span class="label">Username</span>
+                    <span class="value" id="account-username"></span>
+                </div>
+                <div class="acc-row">
+                    <span class="label">Status</span>
+                    <span class="value" style="color:#00b894;">Active</span>
+                </div>
+            </div>
+
+            <button class="logout-full-btn" id="btn-logout-2">Logout</button>
+
+            <div class="nav-spacer"></div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-tab="play">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-item center-nav" data-tab="play" id="center-play-btn">
+                <span class="nav-icon">🎮</span>
+            </button>
+            <button class="nav-item" data-tab="account">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">My</span>
+            </button>
+        </nav>
     </div>
 
     <script>
@@ -374,7 +575,6 @@
         if (!token || !currentUser) window.location.href = '/login.html';
 
         // Set username
-        document.getElementById('nav-username').textContent = currentUser;
         document.getElementById('account-username').textContent = currentUser;
 
         // Fetch balance
@@ -390,28 +590,41 @@
                     return;
                 }
                 if (data.balance !== undefined) {
-                    const formatted = '$' + parseFloat(data.balance).toFixed(2);
-                    document.getElementById('nav-balance').textContent = formatted;
-                    document.getElementById('account-balance').textContent = formatted;
+                    const val = parseFloat(data.balance).toFixed(2);
+                    document.getElementById('nav-balance-play').innerHTML = val + ' <span class="currency">USD</span>';
+                    document.getElementById('account-balance').textContent = '$' + val;
                 }
             } catch (e) { }
         }
         fetchBalance();
 
         // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
+        document.querySelectorAll('.nav-item').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-                if (btn.dataset.tab === 'account') fetchBalance();
+                // Also activate the Home button if center play is clicked
+                if (tab === 'play') {
+                    document.querySelector('.nav-item[data-tab="play"]:not(.center-nav)').classList.add('active');
+                }
+
+                if (tab === 'play') {
+                    document.getElementById('play-panel').classList.remove('panel-hidden');
+                    document.getElementById('play-panel').classList.add('active');
+                    document.getElementById('account-panel').classList.remove('active');
+                    document.getElementById('account-panel').style.display = 'none';
+                    document.getElementById('play-panel').style.display = 'block';
+                } else {
+                    document.getElementById('account-panel').style.display = 'block';
+                    document.getElementById('play-panel').style.display = 'none';
+                    fetchBalance();
+                }
             });
         });
 
         // Logout
         function logout() { localStorage.clear(); window.location.href = '/login.html'; }
-        document.getElementById('btn-logout').addEventListener('click', logout);
         document.getElementById('btn-logout-2').addEventListener('click', logout);
     </script>
 </body>

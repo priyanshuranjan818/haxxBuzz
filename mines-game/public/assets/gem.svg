@@ -1,22 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
     <linearGradient id="gemLight" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#7fff00;stop-opacity:1"/>
-      <stop offset="30%" style="stop-color:#00e701;stop-opacity:1"/>
-      <stop offset="70%" style="stop-color:#00c800;stop-opacity:1"/>
-      <stop offset="100%" style="stop-color:#009900;stop-opacity:1"/>
+      <stop offset="0%" style="stop-color:#7ad8ff;stop-opacity:1"/>
+      <stop offset="30%" style="stop-color:#3bb8f5;stop-opacity:1"/>
+      <stop offset="70%" style="stop-color:#2196f3;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#1565c0;stop-opacity:1"/>
     </linearGradient>
     <linearGradient id="gemDark" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#00c800;stop-opacity:1"/>
-      <stop offset="100%" style="stop-color:#006600;stop-opacity:1"/>
+      <stop offset="0%" style="stop-color:#1e88e5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#0d47a1;stop-opacity:1"/>
     </linearGradient>
     <linearGradient id="gemShine" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.6"/>
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.7"/>
       <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
     </linearGradient>
   </defs>
   <!-- Top triangle (crown) -->
-  <polygon points="50,10 80,40 20,40" fill="url(#gemLight)" stroke="#009900" stroke-width="1"/>
+  <polygon points="50,10 80,40 20,40" fill="url(#gemLight)" stroke="#1565c0" stroke-width="1"/>
   <!-- Bottom left facet -->
   <polygon points="20,40 50,85 50,40" fill="url(#gemDark)"/>
   <!-- Bottom right facet -->
@@ -28,5 +28,5 @@
   <!-- Shine highlight -->
   <polygon points="50,10 62,30 50,25 38,30" fill="url(#gemShine)"/>
   <!-- Center line -->
-  <line x1="20" y1="40" x2="80" y2="40" stroke="#00aa00" stroke-width="1.5"/>
+  <line x1="20" y1="40" x2="80" y2="40" stroke="#1976d2" stroke-width="1.5"/>
 </svg>

@@ -81,11 +81,11 @@ fastify.get('/api/me', (request, reply) => {
 // ==================== ADMIN API ====================
 
 fastify.post('/api/admin/login', (request, reply) => {
-    const { password } = request.body;
-    if (password === 'admin123') {
+    const { username, password } = request.body;
+    if (username === 'admin' && password === 'admin123') {
         reply.send({ success: true, token: 'admin-token-123' });
     } else {
-        reply.code(401).send({ success: false, error: 'Invalid password' });
+        reply.code(401).send({ success: false, error: 'Invalid username or password' });
     }
 });
 

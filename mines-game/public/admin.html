@@ -4,175 +4,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Mines</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Admin - haxxBuzz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .admin-container {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f6fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app {
             width: 100%;
-            max-width: 700px;
-            background-color: var(--bg-sidebar);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 480px;
+            min-height: 100vh;
+            background: #fff;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
         }
 
-        h1 {
-            color: var(--text-light);
-            margin-bottom: 20px;
+        /* ===== Login Screen ===== */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px 25px;
         }
 
-        h3 {
-            color: var(--text-light);
+        .login-screen .logo {
+            font-size: 2.5rem;
             margin-bottom: 10px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .login-screen h1 {
+            font-size: 1.5rem;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+            font-weight: 800;
         }
 
-        th,
-        td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+        .login-screen .subtitle {
+            color: #999;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
         }
 
-        th {
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.8rem;
             font-weight: 600;
-            color: var(--text-light);
-            background-color: var(--bg-card);
+            color: #666;
+            margin-bottom: 6px;
         }
 
-        td {
-            color: var(--text-main);
+        .field input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            background: #f8f9fc;
+            transition: border-color 0.2s;
         }
 
-        tr:hover td {
-            background-color: rgba(255, 255, 255, 0.03);
+        .field input:focus {
+            border-color: #e74c3c;
+            background: #fff;
         }
 
-        .selected-row td {
-            background-color: var(--bg-card-hover) !important;
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: box-shadow 0.2s;
+            margin-top: 8px;
         }
 
-        .stats-bar {
+        .btn-primary:hover {
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        /* ===== Dashboard ===== */
+        .dashboard {
+            padding: 0;
+        }
+
+        .dash-top {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d54);
+            padding: 20px;
+            color: #fff;
+        }
+
+        .dash-top-row {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .dash-top-row h1 {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .dash-top-row .back-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .dash-top-row .back-link:hover {
+            color: #fff;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 10px;
         }
 
         .stat-card {
             flex: 1;
-            background: var(--bg-card);
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card .val {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .stat-card .lbl {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 3px;
+        }
+
+        .dash-body {
+            padding: 18px;
+        }
+
+        .section-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== User List ===== */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .user-row {
+            display: flex;
+            align-items: center;
+            background: #f8f9fc;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 12px 14px;
+            transition: border-color 0.2s;
+        }
+
+        .user-row .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .user-row .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-row .user-name {
+            font-weight: 600;
+            color: #1a1a2e;
+            font-size: 0.88rem;
+        }
+
+        .user-row .user-meta {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 1px;
+        }
+
+        .user-row .user-bal {
+            font-weight: 700;
+            color: #00b894;
+            font-size: 0.9rem;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .user-row .row-btns {
+            display: flex;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s;
+        }
+
+        .btn-sm:hover {
+            opacity: 0.8;
+        }
+
+        .btn-select {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .btn-delete {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .user-row.selected {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        /* ===== Add Funds ===== */
+        .funds-card {
+            background: #f8f9fc;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+
+        .funds-card h3 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .funds-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .funds-row input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            background: #fff;
+        }
+
+        .funds-row input:focus {
+            border-color: #667eea;
+        }
+
+        .btn-add {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #00b894, #2ecc71);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        /* ===== Message ===== */
+        .msg {
+            padding: 10px;
             border-radius: 8px;
             text-align: center;
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-top: 10px;
+            display: none;
         }
 
-        .stat-card .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-light);
+        .msg.error {
+            background: #fff0f0;
+            color: #ff4757;
+            border: 1px solid #ffd0d0;
+            display: block;
         }
 
-        .stat-card .label {
-            font-size: 0.8rem;
-            color: var(--text-main);
-            margin-top: 4px;
+        .msg.success {
+            background: #f0fff4;
+            color: #00b894;
+            border: 1px solid #c3f7d5;
+            display: block;
         }
 
-        .add-funds-row {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
-            margin-top: 20px;
-            background: var(--bg-card);
-            padding: 15px;
-            border-radius: 8px;
+        .hidden {
+            display: none !important;
         }
 
-        .add-funds-row .control-group {
-            flex: 1;
-        }
-
-        .add-funds-row .action-btn {
-            margin-top: 0;
-            white-space: nowrap;
+        @media (max-width: 480px) {
+            .app {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Login -->
-    <div class="admin-container" id="login-screen">
-        <h1>🔒 Admin Login</h1>
-        <div class="control-group">
-            <label style="color:var(--text-light);">Password</label>
-            <div class="input-container">
-                <input type="password" id="admin-password" placeholder="Enter admin password">
-            </div>
-        </div>
-        <button id="btn-login" class="action-btn success" style="width:100%;">Login</button>
-        <div id="login-message" class="message hidden" style="margin-top:10px;"></div>
-    </div>
-
-    <!-- Dashboard -->
-    <div class="admin-container hidden" id="dashboard-screen">
-        <h1>🛡️ Admin Dashboard</h1>
-
-        <div class="stats-bar">
-            <div class="stat-card">
-                <div class="value" id="total-users">0</div>
-                <div class="label">Total Users</div>
-            </div>
-            <div class="stat-card">
-                <div class="value" id="total-balance">$0</div>
-                <div class="label">Total Balance</div>
-            </div>
+    <div class="app">
+        <!-- Login Screen -->
+        <div class="login-screen" id="login-screen">
+            <div class="logo">🛡️</div>
+            <h1>Admin Login</h1>
+            <p class="subtitle">Enter your admin credentials to continue</p>
+            <div class="field"><label>Username</label><input type="text" id="admin-username"
+                    placeholder="Enter admin username" autocomplete="username"></div>
+            <div class="field"><label>Password</label><input type="password" id="admin-password"
+                    placeholder="Enter admin password" autocomplete="current-password"></div>
+            <button class="btn-primary" id="btn-login">Login</button>
+            <div id="login-message" class="msg"></div>
         </div>
 
-        <h3>All Users</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Balance</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="user-list"></tbody>
-        </table>
-
-        <div class="add-funds-row" id="add-funds-row" style="display:none;">
-            <div class="control-group">
-                <label style="color:var(--text-light);">Add funds to <strong id="selected-user-label"></strong></label>
-                <div class="input-container">
-                    <input type="number" id="add-amount" placeholder="Amount" step="1" min="1">
-                    <div class="currency-icon">🪙</div>
+        <!-- Dashboard -->
+        <div class="dashboard hidden" id="dashboard-screen">
+            <div class="dash-top">
+                <div class="dash-top-row">
+                    <h1>🛡️ Admin Dashboard</h1>
+                    <a href="/" class="back-link">← Hub</a>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="val" id="total-users">0</div>
+                        <div class="lbl">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val" id="total-balance">$0</div>
+                        <div class="lbl">Total Balance</div>
+                    </div>
                 </div>
             </div>
-            <button id="btn-add-funds" class="action-btn success">Add Funds</button>
-        </div>
 
-        <div id="dashboard-message" class="message hidden" style="margin-top:15px;"></div>
+            <div class="dash-body">
+                <div class="section-title">👥 All Users</div>
+                <div class="user-list" id="user-list"></div>
+
+                <div class="funds-card hidden" id="add-funds-row">
+                    <h3>💰 Add Funds to <span id="selected-user-label" style="color:#667eea;"></span></h3>
+                    <div class="funds-row">
+                        <input type="number" id="add-amount" placeholder="Enter amount" step="1" min="1">
+                        <button class="btn-add" id="btn-add-funds">+ Add Funds</button>
+                    </div>
+                </div>
+
+                <div id="dashboard-message" class="msg"></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        let adminToken = null;
-        let selectedUser = null;
+        let adminToken = null, selectedUser = null;
 
         document.getElementById('btn-login').addEventListener('click', async () => {
+            const username = document.getElementById('admin-username').value.trim();
             const pw = document.getElementById('admin-password').value;
+            if (!username || !pw) return showMsg('login-message', 'Please fill in all fields', 'error');
             try {
                 const res = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password: pw })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password: pw })
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -180,9 +426,7 @@
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('dashboard-screen').classList.remove('hidden');
                     fetchUsers();
-                } else {
-                    showMsg('login-message', data.error || 'Login failed', 'error');
-                }
+                } else { showMsg('login-message', data.error || 'Login failed', 'error'); }
             } catch (e) { showMsg('login-message', 'Server error', 'error'); }
         });
 
@@ -191,32 +435,34 @@
         });
 
         async function fetchUsers() {
-            const res = await fetch('/api/admin/users', {
-                headers: { 'Authorization': `Bearer ${adminToken}` }
-            });
+            const res = await fetch('/api/admin/users', { headers: { 'Authorization': `Bearer ${adminToken}` } });
             const users = await res.json();
             renderUsers(users);
         }
 
         function renderUsers(users) {
-            const tbody = document.getElementById('user-list');
-            tbody.innerHTML = '';
+            const list = document.getElementById('user-list');
+            list.innerHTML = '';
             let totalBal = 0;
             users.forEach(u => {
                 totalBal += u.balance;
-                const tr = document.createElement('tr');
-                tr.className = selectedUser === u.username ? 'selected-row' : '';
                 const joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : '-';
-                tr.innerHTML = `
-                    <td><strong>${u.username}</strong></td>
-                    <td>$${u.balance.toFixed(2)}</td>
-                    <td>${joined}</td>
-                    <td style="display:flex;gap:6px;">
-                        <button class="action-btn secondary" style="padding:5px 10px;margin:0;font-size:0.75rem;" onclick="selectUser('${u.username}')">Select</button>
-                        <button class="action-btn secondary" style="padding:5px 10px;margin:0;font-size:0.75rem;background:var(--mine-red);color:#fff;" onclick="deleteUser('${u.username}')">Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+                const initials = u.username.substring(0, 2).toUpperCase();
+                const row = document.createElement('div');
+                row.className = 'user-row' + (selectedUser === u.username ? ' selected' : '');
+                row.innerHTML = `
+                <div class="avatar">${initials}</div>
+                <div class="user-info">
+                    <div class="user-name">${u.username}</div>
+                    <div class="user-meta">Joined ${joined}</div>
+                </div>
+                <span class="user-bal">$${u.balance.toFixed(2)}</span>
+                <div class="row-btns">
+                    <button class="btn-sm btn-select" onclick="selectUser('${u.username}')">Select</button>
+                    <button class="btn-sm btn-delete" onclick="deleteUser('${u.username}')">Delete</button>
+                </div>
+            `;
+                list.appendChild(row);
             });
             document.getElementById('total-users').textContent = users.length;
             document.getElementById('total-balance').textContent = '$' + totalBal.toFixed(2);
@@ -225,15 +471,14 @@
         window.selectUser = function (username) {
             selectedUser = username;
             document.getElementById('selected-user-label').textContent = username;
-            document.getElementById('add-funds-row').style.display = 'flex';
-            fetchUsers(); // Re-render to highlight
+            document.getElementById('add-funds-row').classList.remove('hidden');
+            fetchUsers();
         };
 
         document.getElementById('btn-add-funds').addEventListener('click', async () => {
             if (!selectedUser) return;
             const amount = parseFloat(document.getElementById('add-amount').value);
             if (isNaN(amount) || amount <= 0) return showMsg('dashboard-message', 'Enter a valid amount', 'error');
-
             const res = await fetch('/api/admin/add-funds', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
@@ -241,24 +486,14 @@
             });
             const data = await res.json();
             if (data.success) {
-                showMsg('dashboard-message', `Added $${amount} to ${selectedUser}. New balance: $${data.newBalance.toFixed(2)}`, 'success');
+                showMsg('dashboard-message', `Added $${amount} to ${selectedUser}`, 'success');
                 document.getElementById('add-amount').value = '';
                 fetchUsers();
-            } else {
-                showMsg('dashboard-message', data.error || 'Failed', 'error');
-            }
+            } else { showMsg('dashboard-message', data.error || 'Failed', 'error'); }
         });
 
-        function showMsg(id, msg, type) {
-            const el = document.getElementById(id);
-            el.textContent = msg;
-            el.className = `message ${type}`;
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 3000);
-        }
-
         window.deleteUser = async function (username) {
-            if (!confirm(`Are you sure you want to delete user "${username}"? This cannot be undone.`)) return;
+            if (!confirm(`Delete user "${username}"? This cannot be undone.`)) return;
             const res = await fetch('/api/admin/delete-user', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
@@ -266,16 +501,20 @@
             });
             const data = await res.json();
             if (data.success) {
-                showMsg('dashboard-message', `User "${username}" deleted.`, 'success');
+                showMsg('dashboard-message', `User "${username}" deleted`, 'success');
                 if (selectedUser === username) {
                     selectedUser = null;
-                    document.getElementById('add-funds-row').style.display = 'none';
+                    document.getElementById('add-funds-row').classList.add('hidden');
                 }
                 fetchUsers();
-            } else {
-                showMsg('dashboard-message', data.error || 'Delete failed', 'error');
-            }
+            } else { showMsg('dashboard-message', data.error || 'Delete failed', 'error'); }
         };
+
+        function showMsg(id, msg, type) {
+            const el = document.getElementById(id);
+            el.textContent = msg; el.className = `msg ${type}`;
+            setTimeout(() => el.className = 'msg', 3000);
+        }
     </script>
 </body>
 

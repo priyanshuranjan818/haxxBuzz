@@ -4,88 +4,612 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mines - Premium Game</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Mines - Play</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, #1a2a5e 0%, #0f1b3d 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #1e3070 0%, #142050 40%, #0d1636 100%);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+        }
+
+        .back-btn {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mines-selector {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .mines-selector option {
+            background: #1a2a5e;
+            color: #fff;
+        }
+
+        .balance-pill {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        /* Grid Area */
+        .grid-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 14px 16px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 8px;
+        }
+
+        .tile {
+            width: 60px;
+            height: 60px;
+            background: #243b7a;
+            border: 2px solid #3050a0;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            user-select: none;
+            overflow: hidden;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .tile:hover:not(.revealed) {
+            background: #2d4a90;
+            border-color: #4a6cc0;
+        }
+
+        .tile.revealed {
+            cursor: default;
+            transform: none;
+        }
+
+        .tile.revealed.gem {
+            background: linear-gradient(135deg, #1a8c3f, #15732f);
+            border-color: #2ecc71;
+            box-shadow: 0 0 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .tile.revealed.mine {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            border-color: #e74c3c;
+            box-shadow: 0 0 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .tile.dimmed {
+            opacity: 0.3;
+        }
+
+        .tile.mine-hit {
+            animation: shake 0.4s ease-out;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.6) !important;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-4px);
+            }
+
+            50% {
+                transform: translateX(4px);
+            }
+
+            75% {
+                transform: translateX(-3px);
+            }
+        }
+
+        .tile-icon {
+            width: 55%;
+            height: 55%;
+            opacity: 0;
+            transform: scale(0.3);
+            transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .tile.revealed .tile-icon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .tile.revealed.gem .tile-icon {
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+        }
+
+        .tile.revealed.mine .tile-icon {
+            filter: drop-shadow(0 0 6px rgba(255, 80, 80, 0.5));
+        }
+
+        /* Bottom Controls */
+        .bottom-controls {
+            padding: 12px 16px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .action-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .btn-random {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .btn-random:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .gems-info {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .gems-info span {
+            color: #2ecc71;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .bet-section {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .bet-input-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .bet-label {
+            padding: 0 10px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            white-space: nowrap;
+        }
+
+        .bet-input-wrap input {
+            background: none;
+            border: none;
+            color: #fff;
+            padding: 12px 8px;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: inherit;
+            outline: none;
+            text-align: right;
+        }
+
+        .bet-btns {
+            display: flex;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bet-btns button {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px 11px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.75rem;
+            font-family: inherit;
+            border-left: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background 0.2s;
+        }
+
+        .bet-btns button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .btn-bet {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6d8c3a, #8db94e);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: box-shadow 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(109, 140, 58, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-bet:hover {
+            box-shadow: 0 6px 18px rgba(109, 140, 58, 0.5);
+        }
+
+        .btn-bet:active {
+            transform: scale(0.97);
+        }
+
+        .btn-cashout {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f5a623, #f7c948);
+            color: #3d2c00;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: box-shadow 0.2s, transform 0.1s;
+            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-cashout:hover {
+            box-shadow: 0 6px 18px rgba(245, 166, 35, 0.5);
+        }
+
+        .btn-cashout:active {
+            transform: scale(0.97);
+        }
+
+        /* Profit bar */
+        .profit-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .profit-bar .p-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .profit-bar .p-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+
+        .profit-bar .p-multi {
+            background: rgba(46, 204, 113, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #2ecc71;
+        }
+
+        /* Message */
+        .game-msg {
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.82rem;
+            margin-bottom: 10px;
+        }
+
+        .game-msg.win {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+        }
+
+        .game-msg.lose {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="game-container">
-        <!-- Sidebar Controls -->
-        <div class="sidebar">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:8px 0; border-bottom:1px solid var(--border-color);">
-                <a href="/" style="color:var(--text-main); text-decoration:none; font-size:0.9rem; font-weight:600;">←
-                    Back</a>
-                <span style="font-weight:600; color:var(--text-light);">👤 <span id="user-label"></span></span>
+
+    <div class="app">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <a href="/" class="back-btn">← Back</a>
+            <div class="top-controls">
+                <select class="mines-selector" id="mine-count">
+                    <option value="1">Mines: 1</option>
+                    <option value="2">Mines: 2</option>
+                    <option value="3" selected>Mines: 3</option>
+                    <option value="4">Mines: 4</option>
+                    <option value="5">Mines: 5</option>
+                    <option value="10">Mines: 10</option>
+                    <option value="24">Mines: 24</option>
+                </select>
+                <div class="balance-pill" id="balance-display">$0.00</div>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid-area">
+            <div class="grid" id="game-grid"></div>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="bottom-controls">
+            <div id="game-message" class="game-msg hidden"></div>
+
+            <div id="profit-container" class="profit-bar hidden">
+                <span class="p-label">Profit</span>
+                <span class="p-value" id="profit-amount">$0.00</span>
+                <span class="p-multi" id="current-multiplier">1.00x</span>
             </div>
 
-            <div class="control-group">
-                <div class="group-header">
-                    <label>Bet Amount</label>
-                    <span id="balance-display">$0.00</span>
-                </div>
-                <div class="input-container">
-                    <input type="number" id="bet-amount" value="10.00" step="0.50" min="0">
-                    <div class="currency-icon">🪙</div>
-                    <div class="input-actions">
+            <div class="action-row">
+                <button id="btn-random" class="btn-random hidden">🎲 RANDOM</button>
+                <div class="gems-info">Gems left: <span id="gems-remaining">22</span></div>
+            </div>
+
+            <div class="bet-section">
+                <div class="bet-input-wrap">
+                    <span class="bet-label">Bet, USD</span>
+                    <input type="number" id="bet-amount" value="2.00" step="0.50" min="0">
+                    <div class="bet-btns">
                         <button id="btn-half">½</button>
                         <button id="btn-double">2x</button>
                     </div>
                 </div>
-            </div>
-
-            <div class="control-group">
-                <label>Mines</label>
-                <div class="select-container">
-                    <select id="mine-count">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3" selected>3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="24">24</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>Gems (Remaining)</label>
-                <div class="input-container read-only">
-                    <input type="text" id="gems-remaining" value="22" readonly>
-                </div>
-            </div>
-
-            <button id="btn-play" class="action-btn success">Bet</button>
-
-            <button id="btn-cashout" class="action-btn success hidden">Cashout</button>
-            <button id="btn-random" class="action-btn secondary hidden">Random Pick</button>
-
-            <div class="profit-container hidden" id="profit-container">
-                <div class="group-header">
-                    <label>Total Profit (<span id="current-multiplier">1.00</span>x)</label>
-                </div>
-                <div class="input-container read-only">
-                    <input type="text" id="profit-amount" value="0.00" readonly>
-                    <div class="currency-icon">🪙</div>
-                </div>
-            </div>
-
-            <div id="game-message" class="message hidden"></div>
-        </div>
-
-        <!-- Main Game Area -->
-        <div class="main-area">
-            <div class="grid" id="game-grid">
-                <!-- Tiles generated by JS -->
+                <button id="btn-play" class="btn-bet">▶ BET</button>
+                <button id="btn-cashout" class="btn-cashout hidden">💰 CASHOUT</button>
             </div>
         </div>
     </div>
 
-    <script src="js/game.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        const currentUser = localStorage.getItem('username');
+        if (!token || !currentUser) window.location.href = '/login.html';
+
+        let ws, gameState = 'IDLE', tiles = [];
+        const $ = id => document.getElementById(id);
+
+        function connectWebSocket() {
+            ws = new WebSocket(`ws://${location.host}/ws/game`);
+            ws.onopen = () => ws.send(JSON.stringify({ action: 'AUTH', token }));
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.error) {
+                    if (data.error === 'Invalid session') { localStorage.clear(); window.location.href = '/login.html'; return; }
+                    showMsg(data.error, 'lose'); return;
+                }
+                switch (data.type) {
+                    case 'AUTH_OK': break;
+                    case 'GAME_STARTED':
+                        gameState = 'PLAYING';
+                        updateBal(data.balance);
+                        showMsg('Game started! Pick tiles.', 'win');
+                        $('btn-play').classList.add('hidden');
+                        $('btn-cashout').classList.remove('hidden');
+                        $('btn-cashout').textContent = '💰 CASHOUT';
+                        $('btn-random').classList.remove('hidden');
+                        $('profit-container').classList.remove('hidden');
+                        $('bet-amount').disabled = true;
+                        $('mine-count').disabled = true;
+                        tiles.forEach(t => t.className = 'tile');
+                        break;
+                    case 'TILE_REVEALED':
+                        revealTile(data.index, data.tile);
+                        $('current-multiplier').textContent = data.currentMultiplier.toFixed(2) + 'x';
+                        $('profit-amount').textContent = '$' + data.currentPayout.toFixed(2);
+                        $('btn-cashout').textContent = `💰 $${data.currentPayout.toFixed(2)}`;
+                        break;
+                    case 'GAME_OVER':
+                        handleGameOver(data); break;
+                }
+            };
+            ws.onclose = () => setTimeout(connectWebSocket, 2000);
+        }
+
+        function initGrid() {
+            $('game-grid').innerHTML = '';
+            tiles = [];
+            for (let i = 0; i < 25; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.addEventListener('click', () => handleClick(i));
+                $('game-grid').appendChild(tile);
+                tiles.push(tile);
+            }
+        }
+
+        function updateBal(v) { $('balance-display').textContent = '$' + parseFloat(v).toFixed(2); }
+
+        async function fetchBal() {
+            try {
+                const res = await fetch('/api/me', { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.balance !== undefined) updateBal(data.balance);
+                if (data.error === 'Not authenticated') { localStorage.clear(); window.location.href = '/login.html'; }
+            } catch (e) { }
+        }
+
+        function handleClick(i) {
+            if (gameState !== 'PLAYING' || ws.readyState !== WebSocket.OPEN) return;
+            if (tiles[i].classList.contains('revealed')) return;
+            ws.send(JSON.stringify({ action: 'REVEAL', index: i }));
+        }
+
+        function revealTile(i, type, dim) {
+            const t = tiles[i];
+            t.classList.add('revealed', type);
+            if (dim) t.classList.add('dimmed');
+            if (!t.querySelector('.tile-icon')) {
+                const img = document.createElement('img');
+                img.className = 'tile-icon';
+                img.src = type === 'gem' ? '/assets/gem.svg' : '/assets/bomb.svg';
+                t.appendChild(img);
+            }
+            if (type === 'gem' && !dim) {
+                let c = parseInt($('gems-remaining').textContent);
+                $('gems-remaining').textContent = Math.max(0, c - 1);
+            }
+        }
+
+        function handleGameOver(data) {
+            gameState = 'IDLE';
+            data.board.forEach((type, i) => { if (!tiles[i].classList.contains('revealed')) revealTile(i, type, true); });
+            if (data.result === 'loss') {
+                tiles.forEach(t => { if (t.classList.contains('mine') && !t.classList.contains('dimmed')) t.classList.add('mine-hit'); });
+                showMsg('💣 You hit a mine! Bet lost.', 'lose');
+            } else {
+                showMsg(`${data.result === 'cashout' ? 'Cashed Out!' : '🎉 Cleared!'} Won $${data.payout.toFixed(2)} (${data.multiplier}x)`, 'win');
+                updateBal(data.newBalance);
+            }
+            resetIdle();
+        }
+
+        function resetIdle() {
+            $('btn-play').classList.remove('hidden');
+            $('btn-cashout').classList.add('hidden');
+            $('btn-random').classList.add('hidden');
+            $('bet-amount').disabled = false;
+            $('mine-count').disabled = false;
+            setTimeout(() => { if (gameState === 'IDLE') { initGrid(); $('current-multiplier').textContent = '1.00x'; $('profit-amount').textContent = '$0.00'; updateGems(); } }, 2500);
+        }
+
+        function showMsg(msg, type) {
+            $('game-message').textContent = msg;
+            $('game-message').className = `game-msg ${type}`;
+            $('game-message').classList.remove('hidden');
+            setTimeout(() => $('game-message').classList.add('hidden'), 3500);
+        }
+
+        function updateGems() { $('gems-remaining').textContent = 25 - parseInt($('mine-count').value); }
+
+        $('btn-play').addEventListener('click', () => {
+            if (gameState === 'PLAYING') return;
+            if (ws.readyState !== WebSocket.OPEN) { showMsg('Connecting...', 'lose'); return; }
+            initGrid(); updateGems();
+            $('current-multiplier').textContent = '1.00x';
+            $('profit-amount').textContent = '$0.00';
+            ws.send(JSON.stringify({ action: 'BET', betAmount: $('bet-amount').value, mines: $('mine-count').value }));
+        });
+
+        $('btn-cashout').addEventListener('click', () => { if (gameState === 'PLAYING') ws.send(JSON.stringify({ action: 'CASHOUT' })); });
+
+        $('btn-random').addEventListener('click', () => {
+            if (gameState !== 'PLAYING') return;
+            const u = tiles.filter(t => !t.classList.contains('revealed'));
+            if (u.length) handleClick(tiles.indexOf(u[Math.floor(Math.random() * u.length)]));
+        });
+
+        $('mine-count').addEventListener('change', updateGems);
+        $('btn-half').addEventListener('click', () => { let v = parseFloat($('bet-amount').value); if (!isNaN(v)) $('bet-amount').value = Math.max(0.5, v / 2).toFixed(2); });
+        $('btn-double').addEventListener('click', () => { let v = parseFloat($('bet-amount').value); if (!isNaN(v)) $('bet-amount').value = (v * 2).toFixed(2); });
+
+        initGrid(); fetchBal(); updateGems(); connectWebSocket();
+    </script>
 </body>
 
 </html>
