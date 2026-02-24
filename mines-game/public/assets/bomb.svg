@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <radialGradient id="bombBody" cx="40%" cy="35%">
+      <stop offset="0%" style="stop-color:#ff5555;stop-opacity:1"/>
+      <stop offset="60%" style="stop-color:#cc2222;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#881111;stop-opacity:1"/>
+    </radialGradient>
+    <radialGradient id="sparkGlow" cx="50%" cy="50%">
+      <stop offset="0%" style="stop-color:#ffff88;stop-opacity:1"/>
+      <stop offset="60%" style="stop-color:#ffaa00;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#ff6600;stop-opacity:0"/>
+    </radialGradient>
+  </defs>
+  <!-- Bomb body -->
+  <circle cx="50" cy="55" r="35" fill="url(#bombBody)"/>
+  <!-- Highlight on bomb -->
+  <ellipse cx="40" cy="42" rx="12" ry="8" fill="white" opacity="0.2"/>
+  <!-- Fuse top -->
+  <rect x="47" y="15" width="6" height="12" rx="2" fill="#555"/>
+  <!-- Spark glow -->
+  <circle cx="50" cy="12" r="10" fill="url(#sparkGlow)"/>
+  <!-- Spark star -->
+  <polygon points="50,3 52,9 58,9 53,13 55,19 50,15 45,19 47,13 42,9 48,9" fill="#ffffcc"/>
+  <!-- Cross lines on bomb surface -->
+  <line x1="30" y1="55" x2="70" y2="55" stroke="#661111" stroke-width="1.5" opacity="0.4"/>
+  <line x1="50" y1="30" x2="50" y2="82" stroke="#661111" stroke-width="1.5" opacity="0.4"/>
+</svg>

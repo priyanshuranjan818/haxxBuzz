@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Mines</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-container {
+            width: 100%;
+            max-width: 700px;
+            background-color: var(--bg-sidebar);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-light);
+            background-color: var(--bg-card);
+        }
+
+        td {
+            color: var(--text-main);
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .selected-row td {
+            background-color: var(--bg-card-hover) !important;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            margin-top: 4px;
+        }
+
+        .add-funds-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-top: 20px;
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .add-funds-row .control-group {
+            flex: 1;
+        }
+
+        .add-funds-row .action-btn {
+            margin-top: 0;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Login -->
+    <div class="admin-container" id="login-screen">
+        <h1>🔒 Admin Login</h1>
+        <div class="control-group">
+            <label style="color:var(--text-light);">Password</label>
+            <div class="input-container">
+                <input type="password" id="admin-password" placeholder="Enter admin password">
+            </div>
+        </div>
+        <button id="btn-login" class="action-btn success" style="width:100%;">Login</button>
+        <div id="login-message" class="message hidden" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="admin-container hidden" id="dashboard-screen">
+        <h1>🛡️ Admin Dashboard</h1>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="value" id="total-users">0</div>
+                <div class="label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="total-balance">$0</div>
+                <div class="label">Total Balance</div>
+            </div>
+        </div>
+
+        <h3>All Users</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Balance</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="user-list"></tbody>
+        </table>
+
+        <div class="add-funds-row" id="add-funds-row" style="display:none;">
+            <div class="control-group">
+                <label style="color:var(--text-light);">Add funds to <strong id="selected-user-label"></strong></label>
+                <div class="input-container">
+                    <input type="number" id="add-amount" placeholder="Amount" step="1" min="1">
+                    <div class="currency-icon">🪙</div>
+                </div>
+            </div>
+            <button id="btn-add-funds" class="action-btn success">Add Funds</button>
+        </div>
+
+        <div id="dashboard-message" class="message hidden" style="margin-top:15px;"></div>
+    </div>
+
+    <script>
+        let adminToken = null;
+        let selectedUser = null;
+
+        document.getElementById('btn-login').addEventListener('click', async () => {
+            const pw = document.getElementById('admin-password').value;
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pw })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    adminToken = data.token;
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('dashboard-screen').classList.remove('hidden');
+                    fetchUsers();
+                } else {
+                    showMsg('login-message', data.error || 'Login failed', 'error');
+                }
+            } catch (e) { showMsg('login-message', 'Server error', 'error'); }
+        });
+
+        document.getElementById('admin-password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') document.getElementById('btn-login').click();
+        });
+
+        async function fetchUsers() {
+            const res = await fetch('/api/admin/users', {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+            const users = await res.json();
+            renderUsers(users);
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('user-list');
+            tbody.innerHTML = '';
+            let totalBal = 0;
+            users.forEach(u => {
+                totalBal += u.balance;
+                const tr = document.createElement('tr');
+                tr.className = selectedUser === u.username ? 'selected-row' : '';
+                const joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : '-';
+                tr.innerHTML = `
+                    <td><strong>${u.username}</strong></td>
+                    <td>$${u.balance.toFixed(2)}</td>
+                    <td>${joined}</td>
+                    <td style="display:flex;gap:6px;">
+                        <button class="action-btn secondary" style="padding:5px 10px;margin:0;font-size:0.75rem;" onclick="selectUser('${u.username}')">Select</button>
+                        <button class="action-btn secondary" style="padding:5px 10px;margin:0;font-size:0.75rem;background:var(--mine-red);color:#fff;" onclick="deleteUser('${u.username}')">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('total-users').textContent = users.length;
+            document.getElementById('total-balance').textContent = '$' + totalBal.toFixed(2);
+        }
+
+        window.selectUser = function (username) {
+            selectedUser = username;
+            document.getElementById('selected-user-label').textContent = username;
+            document.getElementById('add-funds-row').style.display = 'flex';
+            fetchUsers(); // Re-render to highlight
+        };
+
+        document.getElementById('btn-add-funds').addEventListener('click', async () => {
+            if (!selectedUser) return;
+            const amount = parseFloat(document.getElementById('add-amount').value);
+            if (isNaN(amount) || amount <= 0) return showMsg('dashboard-message', 'Enter a valid amount', 'error');
+
+            const res = await fetch('/api/admin/add-funds', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
+                body: JSON.stringify({ username: selectedUser, amount })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showMsg('dashboard-message', `Added $${amount} to ${selectedUser}. New balance: $${data.newBalance.toFixed(2)}`, 'success');
+                document.getElementById('add-amount').value = '';
+                fetchUsers();
+            } else {
+                showMsg('dashboard-message', data.error || 'Failed', 'error');
+            }
+        });
+
+        function showMsg(id, msg, type) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.className = `message ${type}`;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 3000);
+        }
+
+        window.deleteUser = async function (username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"? This cannot be undone.`)) return;
+            const res = await fetch('/api/admin/delete-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
+                body: JSON.stringify({ username })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showMsg('dashboard-message', `User "${username}" deleted.`, 'success');
+                if (selectedUser === username) {
+                    selectedUser = null;
+                    document.getElementById('add-funds-row').style.display = 'none';
+                }
+                fetchUsers();
+            } else {
+                showMsg('dashboard-message', data.error || 'Delete failed', 'error');
+            }
+        };
+    </script>
+</body>
+
+</html>

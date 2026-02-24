@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mines Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            background-color: var(--bg-sidebar);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-container h1 {
+            color: var(--text-light);
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+        }
+
+        .auth-container p.subtitle {
+            color: var(--text-main);
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .auth-container .control-group {
+            margin-bottom: 18px;
+        }
+
+        .auth-container .control-group label {
+            color: var(--text-light);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .auth-link a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="logo-icon">💎</div>
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Login to play Mines</p>
+
+        <div class="control-group">
+            <label>Username</label>
+            <div class="input-container">
+                <input type="text" id="username" placeholder="Enter your username" autocomplete="username">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Password</label>
+            <div class="input-container">
+                <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+            </div>
+        </div>
+
+        <button id="btn-login" class="action-btn success" style="width:100%;">Login</button>
+
+        <div id="message" class="message hidden" style="margin-top:15px;"></div>
+
+        <div class="auth-link">
+            Don't have an account? <a href="signup.html">Sign Up</a>
+        </div>
+    </div>
+
+    <script>
+        const btnLogin = document.getElementById('btn-login');
+        const msgEl = document.getElementById('message');
+
+        btnLogin.addEventListener('click', async () => {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) return showMsg('Please fill in all fields', 'error');
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('username', data.username);
+                    window.location.href = '/';
+                } else {
+                    showMsg(data.error || 'Login failed', 'error');
+                }
+            } catch (e) {
+                showMsg('Server error', 'error');
+            }
+        });
+
+        // Allow Enter key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') btnLogin.click();
+        });
+
+        function showMsg(msg, type) {
+            msgEl.textContent = msg;
+            msgEl.className = `message ${type}`;
+            msgEl.classList.remove('hidden');
+            setTimeout(() => msgEl.classList.add('hidden'), 3000);
+        }
+
+        // If already logged in, go to game
+        if (localStorage.getItem('token')) window.location.href = '/';
+    </script>
+</body>
+
+</html>
